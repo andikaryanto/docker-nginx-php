@@ -16,12 +16,15 @@ services:
     php:
         container_name: docker-php
         build: ${PHP_BUILD}
+        restart: always
         volumes:
             - ${APPLICATION_DIR}:/var/www/        
     mysql57:
-        container_name: docker-mysql57
-        image: mysql:5.7
+        container_name: docker-mysql
+        image: mysql:latest
+        command: mysqld --default-authentication-plugin=mysql_native_password
         environment:
             MYSQL_ROOT_PASSWORD: root
+        restart: always
         ports:
             - "3366:3306"
