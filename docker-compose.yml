@@ -1,0 +1,20 @@
+version: '3'
+services:
+    nginx:
+        container_name: nginx
+        build: ${NGINX_BUILD}
+        volumes:
+            - ./etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+            - ./etc/nginx/conf.d:/etc/nginx/conf.d
+            - ./etc/nginx/sites-available:/etc/nginx/sites-enabled
+            - ${APPLICATION_DIR}:/var/www/
+        ports:
+            - "8080:80"
+        restart: always
+        depends_on:
+            - php 
+    php:
+        container_name: php
+        build: ${PHP_BUILD}
+        volumes:
+            - ${APPLICATION_DIR}:/var/www/
