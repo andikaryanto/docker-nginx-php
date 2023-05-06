@@ -22,8 +22,12 @@ services:
     mysql57:
         container_name: docker-mysql
         image: mysql:${MYSQL_VERSION}
+        command: bash -c "chmod 644 /etc/mysql/conf.d/mysql.cnf && docker-entrypoint.sh mysqld"
         environment:
             MYSQL_ROOT_PASSWORD: root
-        restart: always
+        restart: always        
+        volumes:
+            # - ${MYSQL_CONFIG_ROOT}/etc/my.cnf:/etc/my.cnf
+            - ${MYSQL_CONFIG_ROOT}/etc/mysql/conf.d:/etc/mysql/conf.d
         ports:
             - "3366:3306"

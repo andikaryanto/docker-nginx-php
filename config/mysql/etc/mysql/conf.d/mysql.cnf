@@ -1,0 +1,2 @@
+[mysqld]
+show_compatibility_56=ON
