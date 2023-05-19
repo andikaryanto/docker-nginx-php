@@ -29,6 +29,6 @@ services:
         volumes:
             # - ${MYSQL_CONFIG_ROOT}/etc/my.cnf:/etc/my.cnf
             - ${MYSQL_CONFIG_ROOT}/etc/mysql/conf.d:/etc/mysql/conf.d
-            - ${MSQL_DATABASE_PATH}:/var/lib/mysql
+            - ${MYSQL_DATABASE_PATH}:/var/lib/mysql
         ports:
             - "3366:3306"
