@@ -19,7 +19,7 @@ services:
         restart: always
         volumes:
             - ${APPLICATION_DIR}:/var/www/  
-            - ${PHP_FPM_CONFIG_ROOT}/usr/etc/local/etc/conf.d:/usr/etc/local/etc/conf.d      
+            - ${PHP-FPM_CONFIG_ROOT}/usr/etc/local/etc/conf.d:/usr/etc/local/etc/conf.d      
     mysql:
         container_name: docker-mysql
         image: mysql:${MYSQL_VERSION}
