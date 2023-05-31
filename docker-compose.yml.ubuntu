@@ -18,8 +18,8 @@ services:
         build: ${PHP_BUILD}
         restart: always
         volumes:
-            - ${APPLICATION_DIR}:/var/www/  
-            # - ${PHP-FPM_CONFIG_ROOT}/usr/etc/local/etc/conf.d:/usr/etc/local/etc/conf.d      
+            - ${APPLICATION_DIR}:/var/www/     
+            - ${PHP_FPM_CONFIG_ROOT}/usr/local/etc/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
     mysql:
         container_name: docker-mysql
         image: mysql:${MYSQL_VERSION}
