@@ -3,6 +3,7 @@ services:
     nginx:
         container_name: docker-nginx
         build: ${NGINX_BUILD}
+        command: bash -c "chmod 777 /var/www/"
         volumes:
             - ${NGINX_CONFIG_ROOT}/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
             - ${NGINX_CONFIG_ROOT}/etc/nginx/conf.d:/etc/nginx/conf.d
@@ -22,7 +23,7 @@ services:
             - ${PHP_FPM_CONFIG_ROOT}/usr/local/etc/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf    
     mysql:
         container_name: docker-mysql
-        image: mysql:${MYSQL_VERSION}
+        image: mysql:5.7
         command: bash -c "chmod 644 /etc/mysql/conf.d/mysql.cnf && docker-entrypoint.sh mysqld"
         environment:
             MYSQL_ROOT_PASSWORD: root
@@ -33,3 +34,13 @@ services:
             - ${MYSQL_DATABASE_PATH}:/var/lib/mysql
         ports:
             - "3366:3306"
+    mysql8:
+        container_name: docker-mysql8
+        image: mysql:8.0
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        restart: always
+        volumes:
+            - ${MYSQL8_DATABASE_PATH}:/var/lib/mysql
+        ports:
+            - "3367:3306"

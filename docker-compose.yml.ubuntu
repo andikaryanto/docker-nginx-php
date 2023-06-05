@@ -22,7 +22,7 @@ services:
             - ${PHP_FPM_CONFIG_ROOT}/usr/local/etc/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
     mysql:
         container_name: docker-mysql
-        image: mysql:${MYSQL_VERSION}
+        image: mysql:5.7
         environment:
             MYSQL_ROOT_PASSWORD: root
         restart: always
@@ -30,3 +30,13 @@ services:
             - ${MYSQL_DATABASE_PATH}:/var/lib/mysql
         ports:
             - "3366:3306"
+    mysql8:
+        container_name: docker-mysql8
+        image: mysql:8.0
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        restart: always
+        volumes:
+            - ${MYSQL8_DATABASE_PATH}:/var/lib/mysql
+        ports:
+            - "3367:3306"
