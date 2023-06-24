@@ -14,6 +14,9 @@ services:
         restart: always
         depends_on:
             - php 
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.2
     php:
         container_name: docker-php
         build: ${PHP_BUILD}
@@ -21,6 +24,9 @@ services:
         volumes:
             - ${APPLICATION_DIR}:/var/www/  
             - ${PHP_FPM_CONFIG_ROOT}/usr/local/etc/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf    
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.3
     mysql:
         container_name: docker-mysql
         image: mysql:5.7
@@ -34,6 +40,9 @@ services:
             - ${MYSQL_DATABASE_PATH}:/var/lib/mysql
         ports:
             - "3366:3306"
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.4
     mysql8:
         container_name: docker-mysql8
         image: mysql:8.0
@@ -44,3 +53,13 @@ services:
             - ${MYSQL8_DATABASE_PATH}:/var/lib/mysql
         ports:
             - "3367:3306"
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.5
+
+networks:
+  nginx_mysql_php_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/24
