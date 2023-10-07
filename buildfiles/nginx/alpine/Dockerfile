@@ -1,4 +1,7 @@
-FROM nginx:stable-alpine
+FROM nginx:1.25-alpine-slim
+
+# Install bash
+RUN apk update && apk add bash
 
 #RUN adduser -D -H -u 1000 -s /bin/bash www-data -G www-data
 # ensure www-data user exists
