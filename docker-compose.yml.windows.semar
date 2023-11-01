@@ -1,0 +1,56 @@
+version: '3'
+services:
+    mysql:
+        container_name: docker-mysql
+        image: mysql:5.7
+        # command: bash -c "chmod 644 /etc/mysql/conf.d/mysql.cnf && docker-entrypoint.sh mysqld"
+        command: ["--lower_case_table_names=1", "--sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"]
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        # restart: always        
+        volumes:
+            # - ${MYSQL_CONFIG_ROOT}/etc/my.cnf:/etc/my.cnf
+            - ${MYSQL_CONFIG_ROOT}/etc/mysql/conf.d:/etc/mysql/conf.d
+            - ${MYSQL_DATABASE_PATH}:/var/lib/mysql
+        ports:
+            - "3366:3306"
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.4
+    mysql8:
+        container_name: docker-mysql8
+        image: mysql:8.0
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        # restart: always
+        volumes:
+            - ${MYSQL8_DATABASE_PATH}:/var/lib/mysql
+        ports:
+            - "3367:3306"
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.5
+    mysql-semar:
+        container_name: docker-mysql-semar
+        image: mysql:5.7
+        # command: bash -c "chmod 644 /etc/mysql/conf.d/mysql.cnf && docker-entrypoint.sh mysqld"
+        command: ["--lower_case_table_names=1", "--sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"]
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        # restart: always        
+        volumes:
+            # - ${MYSQL_CONFIG_ROOT}/etc/my.cnf:/etc/my.cnf
+            - ${MYSQL_CONFIG_ROOT}/etc/mysql/conf.d:/etc/mysql/conf.d
+            - ${MYSQL_DATABASE_SEMAR_PATH}:/var/lib/mysql
+        ports:
+            - "3368:3306"
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.6
+
+networks:
+  nginx_mysql_php_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/24
