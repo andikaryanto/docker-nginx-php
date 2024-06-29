@@ -1,0 +1,9 @@
+# my.cnf
+[mysqld]
+innodb_buffer_pool_size = 2G
+innodb_log_file_size = 512M
+tmp_table_size = 256M
+max_heap_table_size = 256M
+max_allowed_packet = 1073741824
+wait_timeout = 28800
+interactive_timeout = 28800

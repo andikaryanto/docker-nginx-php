@@ -11,12 +11,12 @@ services:
             - ${APPLICATION_DIR}:/var/www/
         ports:
             - "8080:80"
-        restart: always
+        # restart: always
         depends_on:
             - php 
         networks:
             nginx_mysql_php_network:
-                ipv4_address: 172.16.0.2
+                ipv4_address: 172.16.1.2
     php:
         container_name: docker-php
         build: ${PHP_BUILD}
@@ -26,7 +26,7 @@ services:
             - ${PHP_FPM_CONFIG_ROOT}/usr/local/etc/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf    
         networks:
             nginx_mysql_php_network:
-                ipv4_address: 172.16.0.3
+                ipv4_address: 172.16.1.3
     mysql:
         container_name: docker-mysql
         image: mysql:5.7
@@ -43,7 +43,7 @@ services:
             - "3366:3306"
         networks:
             nginx_mysql_php_network:
-                ipv4_address: 172.16.0.4
+                ipv4_address: 172.16.1.4
     mysql8:
         container_name: docker-mysql8
         image: mysql:8.0
@@ -56,11 +56,25 @@ services:
             - "3367:3306"
         networks:
             nginx_mysql_php_network:
-                ipv4_address: 172.16.0.5
+                ipv4_address: 172.16.1.5
+    mariadb10:
+        image: mariadb:10.6
+        container_name: docker-mariadb10
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        ports:
+            - "3466:3306"
+        volumes:
+            - ${MARIADB10_DATABASE_PATH}:/var/lib/mysql
+        
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.1.6
 
 networks:
   nginx_mysql_php_network:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.16.0.0/24
+        - subnet: 172.16.1.0/24
