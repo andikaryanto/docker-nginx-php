@@ -52,6 +52,20 @@ services:
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.5
+    mariadb10:
+        image: mariadb:10.6.18
+        container_name: docker-mariadb10
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        ports:
+            - "3466:3306"
+        volumes:
+            - ${MARIADB10_DATABASE_PATH}:/var/lib/mysql
+        
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.6
 
 networks:
   nginx_mysql_php_network:
