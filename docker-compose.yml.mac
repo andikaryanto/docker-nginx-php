@@ -23,6 +23,8 @@ services:
         volumes:
             - ${APPLICATION_DIR}:/var/www/     
             - ${PHP_FPM_CONFIG_ROOT}/usr/local/etc/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
+        ports:
+            - "9900:9000"
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.3
