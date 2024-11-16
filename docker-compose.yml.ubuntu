@@ -9,7 +9,7 @@ services:
             - ${NGINX_CONFIG_ROOT}/etc/nginx/sites-available:/etc/nginx/sites-enabled
             - ${APPLICATION_DIR}:/var/www/
         ports:
-            - "8080:80"
+            - "9090:80"
         restart: always
         depends_on:
             - php 
@@ -53,7 +53,7 @@ services:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.5
     mariadb10:
-        image: mariadb:10.6.18
+        image: mariadb:10.11.9
         container_name: docker-mariadb10
         restart: always
         environment:
