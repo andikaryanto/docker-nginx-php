@@ -1,3 +1,2 @@
 .env
-config/sshkey
 docker-compose.yml
