@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y git && apt-get clean
 WORKDIR /projects
 
 # Expose a range of ports for development (optional)
-EXPOSE 3000-3100
+EXPOSE 3000-3010
 
 # Default command (keep the container running)
 CMD ["tail", "-f", "/dev/null"]
