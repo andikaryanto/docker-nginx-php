@@ -7,7 +7,8 @@ services:
             - ${NGINX_CONFIG_ROOT}/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
             - ${NGINX_CONFIG_ROOT}/etc/nginx/conf.d:/etc/nginx/conf.d
             - ${NGINX_CONFIG_ROOT}/etc/nginx/sites-available:/etc/nginx/sites-enabled
-            - ${APPLICATION_DIR}:/var/www/
+            - ${SSH_KEYS}:/root/.ssh:ro 
+            - php:/var/www/
         ports:
             - "9090:80"
         restart: always
@@ -21,8 +22,9 @@ services:
         build: ${PHP_BUILD}
         restart: always
         volumes:
-            - ${APPLICATION_DIR}:/var/www/     
+            - php:/var/www/     
             - ${PHP_FPM_CONFIG_ROOT}/usr/local/etc/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
+            - ${SSH_KEYS}:/root/.ssh
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.3
@@ -47,7 +49,6 @@ services:
         restart: always
         volumes:
             - ${MYSQL8_DATABASE_PATH}:/var/lib/mysql
-            - ${MYSQL_CONFIG_ROOT}/etc/my.cnf:/etc/my.cnf
         ports:
             - "3367:3306"
         networks:
@@ -62,11 +63,41 @@ services:
         ports:
             - "3466:3306"
         volumes:
-            - ${MARIADB10_DATABASE_PATH}:/var/lib/mysql
+            - mariadb10_databases:/var/lib/mysql
         
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.6
+    go:
+        container_name: docker-go
+        build: ${GO_BUILD}
+        restart: always
+        ports:
+            - "9091:8080"
+        volumes:
+            - go:/app
+            - ${SSH_KEYS}:/root/.ssh
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.7
+    nodejs:
+        container_name: docker-nodejs
+        build: ${NODEJS_BUILD}
+        volumes:
+            - node:/projects
+        ports:
+            - "3000-3100:3000-3100" # Optional, expose ports for projects
+        stdin_open: true
+        tty: true
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.8
+
+volumes:
+    node:
+    php:
+    mariadb10_databases:
+    go:
 
 networks:
   nginx_mysql_php_network:
