@@ -83,11 +83,12 @@ services:
     nodejs:
         container_name: docker-nodejs
         build: ${NODEJS_BUILD}
+        restart: always
         volumes:
             - node:/projects
             - ${SSH_KEYS}:/root/.ssh
         ports:
-            - "3000-3100:3000-3100" # Optional, expose ports for projects
+            - "3000-3010:3000-3010" # Optional, expose ports for projects
         stdin_open: true
         tty: true
         networks:
