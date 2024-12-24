@@ -22,6 +22,9 @@ RUN apt-get update && apt-get install -y \
     g++ \
     make \
     linux-headers-amd64 \
+    cron \
+    nano \
+    dos2unix \
     --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
@@ -47,8 +50,20 @@ RUN pecl install xdebug \
     && docker-php-ext-enable xdebug \
     && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.disabled
 
+COPY ./entrypoint.sh /usr/local/bin/
+COPY ./laravel-crontab /etc/cron.d/
+
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# convert line endings
+RUN dos2unix /etc/cron.d/laravel-crontab
+
 # Set working directory
 WORKDIR /var/www
 
 # Expose PHP-FPM port
 EXPOSE 9000
+
+# Define the entrypoint to start PHP-FPM and cron
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["php-fpm"]

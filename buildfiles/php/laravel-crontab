@@ -1,0 +1,2 @@
+* * * * * root php /var/www/laravelsimklinik/artisan schedule:run >> /dev/null 2>&1
+* * * * * root echo "aa" > /var/www/laravelsimklinik/storage/logs/laravel.log

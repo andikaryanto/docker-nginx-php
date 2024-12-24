@@ -83,6 +83,7 @@ services:
     nodejs:
         container_name: docker-nodejs
         build: ${NODEJS_BUILD}
+        restart: always
         volumes:
             - node:/projects
             - ${SSH_KEYS}:/root/.ssh
