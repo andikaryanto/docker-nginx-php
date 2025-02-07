@@ -1,5 +1,6 @@
 # Use the official Node.js image
-FROM node:22.13.0
+# FROM node:18.20
+FROM node:20.18
 
 # Install Git
 RUN apt-get update && apt-get install -y git && apt-get clean
