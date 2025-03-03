@@ -94,11 +94,26 @@ services:
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.8
+    postgres17:
+        image: postgres:17.4
+        container_name: docker-postgres17
+        restart: always
+        environment:
+            POSTGRES_USER: root
+            POSTGRES_PASSWORD : root
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres17_databases:/var/lib/postgresql/data        
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.9
 
 volumes:
     node:
     php:
     mariadb10_databases:
+    postgres17_databases:
     go:
 
 networks:

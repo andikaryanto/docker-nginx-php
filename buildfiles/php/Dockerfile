@@ -25,6 +25,7 @@ RUN apt-get update && apt-get install -y \
     cron \
     nano \
     dos2unix \
+    libpq-dev \
     --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
@@ -39,6 +40,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
 RUN docker-php-source extract \
     && docker-php-ext-install \
     pdo_mysql \
+    pdo_pgsql \
+    pgsql \
     gd \
     zip \
     bcmath \
