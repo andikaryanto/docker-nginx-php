@@ -1,7 +1,9 @@
 FROM litespeedtech/openlitespeed:1.8.3-lsphp82
 
 # Install PHP extensions
-# RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y \
+    git \
+    cron \
 #     lsphp82 \
 #     lsphp82-mysql \
 #     lsphp82-curl \
@@ -12,7 +14,7 @@ FROM litespeedtech/openlitespeed:1.8.3-lsphp82
 #     # lsphp82-gd \
 #     lsphp82-intl \
 #     lsphp82-opcache \
-#     && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 # Set default PHP version
 # RUN ln -sf /usr/local/lsws/lsphp82/bin/lsphp /usr/local/lsws/fcgi-bin/lsphp
