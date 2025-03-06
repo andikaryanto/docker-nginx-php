@@ -7,7 +7,6 @@ RUN apt-get update && apt-get install -y \
     lsphp82 \
     lsphp82-mysql \
     lsphp82-curl \
-    sqlite3 \
 #     lsphp82-mbstring \
 #     lsphp82-xml \
 #     lsphp82-zip \
@@ -15,7 +14,6 @@ RUN apt-get update && apt-get install -y \
 #     # lsphp82-gd \
 #     lsphp82-intl \
 #     lsphp82-opcache \
-    php-sqlite3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Set default PHP version
