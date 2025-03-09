@@ -135,6 +135,7 @@ services:
 volumes:
     node:
     php:
+    postgres17_databases:
     mariadb10_databases:
     go:
 
