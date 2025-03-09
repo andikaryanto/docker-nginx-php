@@ -88,7 +88,7 @@ services:
             - node:/projects
             - ${SSH_KEYS}:/root/.ssh
         ports:
-            - "3000-3010:3000-3010" # Optional, expose ports for projects
+            - "3001-3010:3001-3010" # Optional, expose ports for projects
         stdin_open: true
         tty: true
         networks:
@@ -108,12 +108,34 @@ services:
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.9
+    openlitespeed:
+        build: ${LITESPEED_BUILD}
+        container_name: docker-openlitespeed
+        # restart: always
+        ports:
+            - "8089:8089"  # App LiteSpeed Web Server
+            - "8088:8088"  # LiteSpeed Web Server
+            - "7080:7080"  # LiteSpeed Admin Panel
+            - "443:443"    # HTTPS (if needed)
+        volumes:
+            # - ./litespeed_data:/usr/local/lsws
+            # - ./litespeed_logs:/usr/local/lsws/logs            - 
+            - ${LITESPEED_CONFIG_ROOT}/usr/local/lsws/conf/httpd_config.conf:/usr/local/lsws/conf/httpd_config.conf
+            - ${LITESPEED_CONFIG_ROOT}/usr/local/lsws/conf/vhosts/Laravelsimklinik:/usr/local/lsws/conf/vhosts/Laravelsimklinik
+            # - ${LITESPEED_BUILD}/entrypoint.sh:/entrypoint.sh  # Mount custom script
+            - php:/var/www/     
+            - ${SSH_KEYS}:/root/.ssh
+        environment:
+            - WEBADMIN_USER=admin
+            - WEBADMIN_PASS=admin54321       
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.10
 
 volumes:
     node:
     php:
     mariadb10_databases:
-    postgres17_databases:
     go:
 
 networks:
