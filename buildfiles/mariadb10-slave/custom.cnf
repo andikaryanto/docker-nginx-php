@@ -1,0 +1,5 @@
+[mysqld]
+server-id = 2
+relay-log = mariadb-relay-bin
+log_bin = mariadb-bin
+read_only = 1

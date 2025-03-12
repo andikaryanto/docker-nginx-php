@@ -1,0 +1,29 @@
+on master
+
+-- CREATE USER 'replicator'@'%' IDENTIFIED BY 'replicator';
+-- GRANT REPLICATION SLAVE ON *.* TO 'replicator'@'%';
+-- FLUSH PRIVILEGES;
+
+
+-- First, double check the slave's IP (yours is 172.16.0.12)
+-- CREATE USER 'replicator'@'172.16.0.12' IDENTIFIED BY 'replicator';
+-- GRANT REPLICATION SLAVE ON *.* TO 'replicator'@'172.16.0.12';
+-- FLUSH PRIVILEGES;
+-- 172.16.0.12 is slace server
+
+SHOW MASTER STATUS; -- take file(mariadb-bin.000001) and las position (1137)
+
+on slave;
+
+CHANGE MASTER TO
+  MASTER_HOST='docker-mariadb10-master',
+  MASTER_USER='replicator',
+  MASTER_PASSWORD='replicator',
+  MASTER_LOG_FILE='mariadb-bin.000001',  -- (use your latest file)
+  MASTER_LOG_POS=1137,                    -- (use your latest position)
+  MASTER_PORT=3306;
+
+START SLAVE;
+ 
+SHOW SLAVE STATUS;
+
