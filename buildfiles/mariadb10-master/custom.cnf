@@ -3,4 +3,6 @@ server-id = 1
 log_bin = mariadb-bin
 binlog_format = ROW
 binlog_do_db = adyaksa
+max_binlog_size = 100M
+expire_logs_days = 7
 
