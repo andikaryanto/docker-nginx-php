@@ -9,7 +9,7 @@ on master
 -- CREATE USER 'replicator'@'172.16.0.12' IDENTIFIED BY 'replicator';
 -- GRANT REPLICATION SLAVE ON *.* TO 'replicator'@'172.16.0.12';
 -- FLUSH PRIVILEGES;
--- 172.16.0.12 is slace server
+-- 172.16.0.12 is slave server
 
 SHOW MASTER STATUS; -- take file(mariadb-bin.000001) and las position (1137)
 
