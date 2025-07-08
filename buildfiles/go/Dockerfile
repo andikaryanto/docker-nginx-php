@@ -10,6 +10,10 @@ RUN go mod init bitbucket.org/andikaryanto11/go-api-design  # Initialize the mod
 # Download Go dependencies (will create go.mod and go.sum automatically)
 RUN go mod tidy
 
+#copy idrsa
+COPY config/sshkey/id_rsa /root/.ssh/id_rsa
+RUN chmod 600 /root/.ssh/id_rsa
+
 # Expose port
 EXPOSE 8080
 

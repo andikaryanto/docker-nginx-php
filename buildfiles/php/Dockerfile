@@ -53,8 +53,12 @@ RUN pecl install xdebug \
     && docker-php-ext-enable xdebug \
     && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.disabled
 
-COPY ./entrypoint.sh /usr/local/bin/
-COPY ./laravel-crontab /etc/cron.d/
+COPY buildfiles/php/entrypoint.sh /usr/local/bin/
+COPY buildfiles/php/laravel-crontab /etc/cron.d/
+
+#copy idrsa
+COPY config/sshkey/id_rsa /root/.ssh/id_rsa
+RUN chmod 600 /root/.ssh/id_rsa
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
 

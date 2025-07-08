@@ -31,7 +31,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
     && apt-get install -y nodejs \
     && npm install -g yarn
 
-COPY ./entrypoint.sh /usr/local/bin/
+COPY buildfiles/litespeed/entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Set document root to Laravel's public folder

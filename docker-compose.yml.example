@@ -7,7 +7,6 @@ services:
             - ${NGINX_CONFIG_ROOT}/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
             - ${NGINX_CONFIG_ROOT}/etc/nginx/conf.d:/etc/nginx/conf.d
             - ${NGINX_CONFIG_ROOT}/etc/nginx/sites-available:/etc/nginx/sites-enabled
-            - ${SSH_KEYS}:/root/.ssh:ro 
             - php:/var/www/
         ports:
             - "9090:80"
@@ -19,12 +18,13 @@ services:
                 ipv4_address: 172.16.0.2
     php:
         container_name: docker-php
-        build: ${PHP_BUILD}
+        build: 
+            context: .
+            dockerfile: ${PHP_BUILD}/Dockerfile
         restart: always
         volumes:
             - php:/var/www/     
             - ${PHP_FPM_CONFIG_ROOT}/usr/local/etc/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
-            - ${SSH_KEYS}:/root/.ssh
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.3
@@ -70,23 +70,25 @@ services:
                 ipv4_address: 172.16.0.6
     go:
         container_name: docker-go
-        build: ${GO_BUILD}
+        build: 
+            context: .
+            dockerfile: ${GO_BUILD}/Dockerfile
         restart: always
         ports:
             - "9091:8080"
         volumes:
             - go:/app
-            - ${SSH_KEYS}:/root/.ssh
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.7
     nodejs:
         container_name: docker-nodejs
-        build: ${NODEJS_BUILD}
+        build: 
+            context: .
+            dockerfile: ${NODEJS_BUILD}/Dockerfile
         restart: always
         volumes:
             - node:/projects
-            - ${SSH_KEYS}:/root/.ssh
         ports:
             - "3000-3010:3000-3010" # Optional, expose ports for projects
         stdin_open: true
@@ -109,7 +111,9 @@ services:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.9
     openlitespeed:
-        build: ${LITESPEED_BUILD}
+        build: 
+            context: .
+            dockerfile: ${LITESPEED_BUILD}/Dockerfile
         container_name: docker-openlitespeed
         # restart: always
         ports:
@@ -124,7 +128,6 @@ services:
             - ${LITESPEED_CONFIG_ROOT}/usr/local/lsws/conf/vhosts/Laravelsimklinik:/usr/local/lsws/conf/vhosts/Laravelsimklinik
             # - ${LITESPEED_BUILD}/entrypoint.sh:/entrypoint.sh  # Mount custom script
             - php:/var/www/     
-            - ${SSH_KEYS}:/root/.ssh
         environment:
             - WEBADMIN_USER=admin
             - WEBADMIN_PASS=admin54321       
