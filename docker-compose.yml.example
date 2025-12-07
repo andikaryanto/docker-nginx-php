@@ -48,7 +48,7 @@ services:
             MYSQL_ROOT_PASSWORD: root
         restart: always
         volumes:
-            - ${MYSQL8_DATABASE_PATH}:/var/lib/mysql
+            - mysql8_databases:/var/lib/mysql
         ports:
             - "3367:3306"
         networks:
@@ -160,16 +160,61 @@ services:
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.12
+    nodejs-prodlike:
+        container_name: docker-nodejs-prodlike
+        build: 
+            context: .
+            dockerfile: ${NODEJS_PRODLIKE_BUILD}/Dockerfile
+        restart: always
+        volumes:
+            - node:/projects
+        ports:
+            - "3011-3020:3011-3020" # Optional, expose ports for projects
+        stdin_open: true
+        tty: true
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.13    
+    portainer:
+        image: portainer/portainer-ce:lts
+        container_name: docker-portainer
+        restart: always
+        ports:
+            - "8000:8000"
+            - "9000:9000"
+            - "9443:9443"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock 
+            - portainer:/data   
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.14
+    java:        
+        container_name: docker-java
+        build:
+            context: .
+            dockerfile: ${AMAZON_CORRETO_BUILD}/Dockerfile
+        restart: always
+        ports:
+            - "8090:8099"
+        volumes:
+            - java:/var/www
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.15
 
 volumes:
+    java:
     node:
     php:
     php_litespeed:
     mariadb10_databases:
     mariadb10_master_databases:
     mariadb10_slave_databases:
+    portainer:
     postgres17_databases:
     go:
+    mysql8_databases:
 
 networks:
   nginx_mysql_php_network:
