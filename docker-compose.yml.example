@@ -91,6 +91,8 @@ services:
             - node:/projects
         ports:
             - "3000-3010:3000-3010" # Optional, expose ports for projects
+        extra_hosts:
+            - "landlord.laravelsimklinik.id:172.16.0.2"
         stdin_open: true
         tty: true
         networks:
@@ -196,12 +198,28 @@ services:
             dockerfile: ${AMAZON_CORRETO_BUILD}/Dockerfile
         restart: always
         ports:
-            - "8090:8099"
+            - "8081:8089"
         volumes:
             - java:/var/www
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.15
+    minio:
+        image: quay.io/minio/minio:latest
+        container_name: docker-minio
+        restart: always
+        ports:
+            - "9011:9000"  # API
+            - "9010:9001"  # Console
+        environment:
+            MINIO_ROOT_USER: admin
+            MINIO_ROOT_PASSWORD: password123
+        volumes:
+            - minio:/data
+        command: server /data --console-address ":9001"
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.16
 
 volumes:
     java:
@@ -211,6 +229,7 @@ volumes:
     mariadb10_databases:
     mariadb10_master_databases:
     mariadb10_slave_databases:
+    minio:
     portainer:
     postgres17_databases:
     go:
