@@ -26,7 +26,15 @@ RUN apt-get update && apt-get install -y \
     nano \
     dos2unix \
     libpq-dev \
+    libzstd-dev \
     --no-install-recommends && rm -rf /var/lib/apt/lists/*
+
+# Install and configure Xdebug and Redis
+RUN pecl install xdebug redis \
+    && docker-php-ext-enable xdebug \
+    && echo "xdebug.mode = debug" >> /usr/local/etc/php/php.ini \
+    && echo "xdebug.start_with_request = yes" >> /usr/local/etc/php/php.ini
+# && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.disabled
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -46,14 +54,8 @@ RUN docker-php-source extract \
     zip \
     bcmath \
     mysqli \
-    && docker-php-source delete
-
-# Install and configure Xdebug
-RUN pecl install xdebug \
-    && docker-php-ext-enable xdebug \
-    && echo "xdebug.mode = debug" >> /usr/local/etc/php/php.ini \
-    && echo "xdebug.start_with_request = yes" >> /usr/local/etc/php/php.ini
-    # && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.disabled
+    && docker-php-source delete \
+    && docker-php-ext-enable redis
 
 COPY buildfiles/php/entrypoint.sh /usr/local/bin/
 COPY buildfiles/php/laravel-crontab /etc/cron.d/
