@@ -21,7 +21,6 @@ RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     make \
-    linux-headers-amd64 \
     cron \
     nano \
     dos2unix \
