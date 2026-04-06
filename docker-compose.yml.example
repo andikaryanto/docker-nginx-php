@@ -23,6 +23,8 @@ services:
             context: .
             dockerfile: ${PHP_BUILD}/Dockerfile
         restart: always
+        security_opt:
+            - seccomp=unconfined
         volumes:
             - php:/var/www/     
             - ${PHP_FPM_CONFIG_ROOT}/usr/local/etc/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
@@ -75,6 +77,8 @@ services:
             context: .
             dockerfile: ${GO_BUILD}/Dockerfile
         restart: always
+        security_opt:
+            - seccomp=unconfined
         ports:
             - "9091:8080"
         volumes:
@@ -88,6 +92,8 @@ services:
             context: .
             dockerfile: ${NODEJS_BUILD}/Dockerfile
         restart: always
+        security_opt:
+            - seccomp=unconfined
         volumes:
             - node:/projects
         ports:
@@ -169,6 +175,8 @@ services:
             context: .
             dockerfile: ${NODEJS_PRODLIKE_BUILD}/Dockerfile
         restart: always
+        security_opt:
+            - seccomp=unconfined
         volumes:
             - node:/projects
         ports:
@@ -198,6 +206,8 @@ services:
             context: .
             dockerfile: ${AMAZON_CORRETO_BUILD}/Dockerfile
         restart: always
+        security_opt:
+            - seccomp=unconfined
         ports:
             - "8081:8089"
         volumes:
