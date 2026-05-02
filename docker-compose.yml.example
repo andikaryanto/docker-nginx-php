@@ -8,6 +8,7 @@ services:
             - ${NGINX_CONFIG_ROOT}/etc/nginx/conf.d:/etc/nginx/conf.d
             - ${NGINX_CONFIG_ROOT}/etc/nginx/sites-available:/etc/nginx/sites-enabled
             - php:/var/www/
+            - ${CODEX_CONFIG_ROOT}:/root/.codex
         ports:
             - "9090:80"
             - "5173:5173"
@@ -28,6 +29,7 @@ services:
         volumes:
             - php:/var/www/     
             - ${PHP_FPM_CONFIG_ROOT}/usr/local/etc/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
+            - ${CODEX_CONFIG_ROOT}:/root/.codex
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.3
@@ -90,12 +92,13 @@ services:
         container_name: docker-nodejs
         build: 
             context: .
-            dockerfile: ${NODEJS_BUILD}/Dockerfile
+            dockerfile: ${NODEJS_BUILD}/Dockerfile 
         restart: always
         security_opt:
             - seccomp=unconfined
         volumes:
             - node:/projects
+            - ${CODEX_CONFIG_ROOT}:/root/.codex
         ports:
             - "3000-3010:3000-3010" # Optional, expose ports for projects
         extra_hosts:
@@ -240,8 +243,43 @@ services:
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.17
+    adrena:
+        build:
+            context: .
+            dockerfile:  ${EXPO_BUILD}/Dockerfile
+        container_name: docker-adrena
+        working_dir: /app
+        security_opt:
+            - seccomp=unconfined
 
+        volumes:
+            # Source code
+            - expo:/app
+            # Prevent host/container node_modules conflicts
+            - expo_node_modules:/app/node_modules
+            # Speed up npm installs
+            - expo_npm_cache:/root/.npm
+            - ${CODEX_CONFIG_ROOT}:/root/.codex
+
+        ports:
+            - "8081:8081"
+            - "19000:19000"
+            - "19001:19001"
+            - "19002:19002"
+
+        environment:
+            NODE_ENV: development
+            CI: "0"
+            EXPO_NO_TELEMETRY: "1"
+            CHOKIDAR_USEPOLLING: "true"
+            WATCHPACK_POLLING: "true"
+
+        stdin_open: true
+        tty: true
 volumes:
+    expo:
+    expo_node_modules:
+    expo_npm_cache:
     java:
     node:
     php:
