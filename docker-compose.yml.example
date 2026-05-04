@@ -30,6 +30,7 @@ services:
             - php:/var/www/     
             - ${PHP_FPM_CONFIG_ROOT}/usr/local/etc/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
             - ${CODEX_CONFIG_ROOT}:/root/.codex
+            - ${CODEX_CONFIG_ROOT}:/var/www/.codex
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.3
