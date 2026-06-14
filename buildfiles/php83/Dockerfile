@@ -1,7 +1,7 @@
 FROM php:8.3-fpm
 
 # Set environment and user
-# ENV HOME /var/www
+ENV HOME /var/www
 USER root
 
 # Update and install required dependencies
@@ -58,7 +58,6 @@ RUN docker-php-source extract \
     zip \
     bcmath \
     mysqli \
-    pcntl \
     && docker-php-source delete \
     && docker-php-ext-enable redis
 
