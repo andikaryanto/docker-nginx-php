@@ -1,7 +1,7 @@
 FROM php:8.2-fpm
 
 # Set environment and user
-ENV HOME /var/www
+# ENV HOME /var/www
 USER root
 
 # Update and install required dependencies
