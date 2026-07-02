@@ -1,5 +1,7 @@
 FROM python:3.12-slim
 
+RUN cat /etc/os-release
+
 # Install system packages
 RUN apt-get update && apt-get install -y \
     git \
@@ -10,7 +12,18 @@ RUN apt-get update && apt-get install -y \
     sed \
     procps \
     openssh-client \
+    ca-certificates \
+    gnupg \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get update \
+    && apt-get install -y nodejs
+
+# Install Codex CLI
+RUN npm install -g @openai/codex
+RUN npm install -g @anthropic-ai/claude-code
 
 # Create working directory
 WORKDIR /workspace
