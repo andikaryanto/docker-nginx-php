@@ -31,6 +31,7 @@ services:
             - skills:/var/skills/    
             - ${PHP_FPM_CONFIG_ROOT}/usr/local/etc/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
             - ${CODEX_CONFIG_ROOT}:/root/.codex
+            - ${CLAUDE_CODE_CONFIG_ROOT}:/root/.claude
         ports:
             - "8080:8080"
         networks:
@@ -102,6 +103,7 @@ services:
         volumes:
             - node:/projects
             - ${CODEX_CONFIG_ROOT}:/root/.codex
+            - ${CLAUDE_CODE_CONFIG_ROOT}:/root/.claude
         ports:
             - "3000-3010:3000-3010" # Optional, expose ports for projects
         extra_hosts:
@@ -306,7 +308,9 @@ services:
             dockerfile: buildfiles/ai-agent/Dockerfile
         volumes:
             - php:/workspace/php
+            - node:/workspace/node
             - ${CODEX_CONFIG_ROOT}:/root/.codex
+            - ${CLAUDE_CODE_CONFIG_ROOT}:/root/.claude
         tty: true        
         networks:
             nginx_mysql_php_network:
