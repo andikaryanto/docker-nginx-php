@@ -37,6 +37,8 @@ RUN pip install \
     langchain \
     langchain-openai \
     langchain-anthropic \
+    redis \
+    langgraph-checkpoint-redis \
     pyyaml
 
 # Optional utilities
