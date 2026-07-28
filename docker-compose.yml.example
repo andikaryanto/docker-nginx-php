@@ -34,6 +34,10 @@ services:
             - ${CLAUDE_CODE_CONFIG_ROOT}:/root/.claude
         ports:
             - "8080:8080"
+        command: >
+            sh -c "git config --global user.name \"$$GH_USERNAME\" &&
+                    git config --global user.email \"$$GH_EMAIL\" &&
+                    tail -f /dev/null"
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.3
@@ -110,6 +114,10 @@ services:
             - "landlord.laravelsimklinik.id:172.16.0.2"
         stdin_open: true
         tty: true
+        command: >
+            sh -c "git config --global user.name \"$$GH_USERNAME\" &&
+                    git config --global user.email \"$$GH_EMAIL\" &&
+                    tail -f /dev/null"
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.8
@@ -240,7 +248,7 @@ services:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.16
     redis:
-        image: redis:7.2.6-alpine
+        image: redis:8.4-alpine
         restart: always
         container_name: docker-redis
         ports:
@@ -311,6 +319,14 @@ services:
             - node:/workspace/node
             - ${CODEX_CONFIG_ROOT}:/root/.codex
             - ${CLAUDE_CODE_CONFIG_ROOT}:/root/.claude
+        environment:
+            - GH_TOKEN=${LANGGRAPH_GH_PAT}
+            - GH_EMAIL=${GH_EMAIL}
+            - GH_USERNAME=${GH_USERNAME}
+        command: >
+            sh -c "git config --global user.name \"$$GH_USERNAME\" &&
+                    git config --global user.email \"$$GH_EMAIL\" &&
+                    tail -f /dev/null"
         tty: true        
         networks:
             nginx_mysql_php_network:
