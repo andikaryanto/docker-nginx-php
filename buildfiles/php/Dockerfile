@@ -31,6 +31,9 @@ RUN apt-get update && apt-get install -y \
     dos2unix \
     libpq-dev \
     libzstd-dev \
+    libwebp-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
     --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 # Install and configure Xdebug and Redis
@@ -47,6 +50,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && npm install -g yarn
+
+
+RUN docker-php-ext-configure gd --with-webp --with-jpeg --with-freetype
 
 # Enable and install PHP extensions
 RUN docker-php-source extract \
