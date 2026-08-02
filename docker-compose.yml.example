@@ -37,6 +37,7 @@ services:
         command: >
             sh -c "git config --global user.name \"$$GH_USERNAME\" &&
                     git config --global user.email \"$$GH_EMAIL\" &&
+                    php-fpm -D &&
                     tail -f /dev/null"
         networks:
             nginx_mysql_php_network:
