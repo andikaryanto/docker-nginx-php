@@ -31,6 +31,9 @@ RUN apt-get update && apt-get install -y \
     dos2unix \
     libpq-dev \
     libzstd-dev \
+    libwebp-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
     --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 # Install and configure Xdebug and Redis
