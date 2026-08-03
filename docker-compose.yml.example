@@ -332,6 +332,21 @@ services:
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.19
+    minio-init:
+        image: quay.io/minio/mc:latest
+        container_name: docker-minio-init
+        depends_on:
+            - minio
+        restart: "no"
+        entrypoint: >
+            sh -c "
+            until mc alias set myminio http://minio:9000 admin password123; do sleep 1; done;
+            mc mb --ignore-existing myminio/simklinik;
+            mc anonymous set download myminio/simklinik;
+            "
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.20
 volumes:
     expo:
     expo_node_modules:
