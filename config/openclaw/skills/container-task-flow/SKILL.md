@@ -97,7 +97,7 @@ List existing tasks with statuses so the user can pick a real one:
 docker exec <container> python3 -c "import json,glob; [print(json.load(open(f))['id'], '-', json.load(open(f))['status'], '-', json.load(open(f)).get('title','')) for f in sorted(glob.glob('<project-root>/<project>/.ai/tasks/*.json'))]"
 ```
 
-Show up to ~10 as buttons (`value: task:<id>`, prefer non-`approved` ones first since those are the actionable ones for Approve/Revise/Reopen/Resume), and mention they can type an id instead. Validate a typed id the same way as project names (must appear in the listing, or `docker exec <container> test -f <project-root>/<project>/.ai/tasks/<id>.json`) — if not found, say so and ask again.
+Show up to ~10 as buttons (`value: task:<id>`, prefer non-`approved` ones first since those are the actionable ones for Approve/Revise/Reopen/Resume), and mention they can type an id instead. Validate a typed id the same way as project names (must appear in the listing, or `docker exec <container> test -f <project-root>/<project>/.ai/tasks/<timestamp><id>.json`) — if not found, say so and ask again.
 
 - `cmd:approve` -> no extra input needed.
 - `cmd:revise` or `cmd:reopen` -> ask for a comment (free text, one message).
