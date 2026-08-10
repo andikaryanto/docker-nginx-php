@@ -8,7 +8,7 @@
   },
   "meta": {
     "lastTouchedVersion": "2026.7.1",
-    "lastTouchedAt": "2026-08-10T08:56:46.134Z"
+    "lastTouchedAt": "2026-08-10T09:39:33.408Z"
   },
   "agents": {
     "defaults": {
@@ -24,5 +24,8 @@
     "ownerAllowFrom": [
       "telegram:5020896869"
     ]
+  },
+  "logging": {
+    "file": "/home/node/.openclaw/logs/gateway.log"
   }
 }

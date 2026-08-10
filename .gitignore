@@ -5,3 +5,6 @@ litespeed_logs
 config/codex*/*
 config/openclaw/*
 !config/openclaw/openclaw.json
+!config/openclaw/skills
+config/openclaw/skills/*
+!config/openclaw/skills/container-task-flow
