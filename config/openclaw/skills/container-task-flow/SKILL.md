@@ -47,8 +47,8 @@ The project's `.ai/` directory holds these executable commands (all shell out to
 
 | Button label | Script | Needs |
 | --- | --- | --- |
-| New Task | `task_and_push.py` | fresh task JSON you compose (Step 4a) |
-| Resume Task | `task_and_push.py` | an existing task id (Step 4b) |
+| New Task | *(none — only writes the task JSON, never runs it)* | requirements you compose (Step 4a) |
+| Resume Task | `task_and_push.py` | an existing task id (Step 4b) — this is what actually runs a task, including a freshly created one |
 | Approve | `approve.py` | an existing task id |
 | Request Revision | `revise_and_push.py` | an existing task id + a comment |
 | Reopen | `reopen_and_revise.py` | an existing task id + a comment |
@@ -87,7 +87,7 @@ Compose the task JSON (exact shape — extra/missing fields break the pipeline):
 }
 ```
 
-Go to Step 5 with: action = run `task_and_push.py <id>`, and the task JSON still needs to be written into place first.
+Go to Step 5 with: action = write the task JSON only. **Never run `task_and_push.py` or any other script from the New Task path** — creating a task is a pure file-write. Once written, tell the user the task id and that they can trigger `Resume Task` on it (as a separate "do task" request) whenever they want it to actually run.
 
 ## Step 4b — Existing task: pick one, gather extras
 
@@ -97,7 +97,7 @@ List existing tasks with statuses so the user can pick a real one:
 docker exec <container> python3 -c "import json,glob; [print(json.load(open(f))['id'], '-', json.load(open(f))['status'], '-', json.load(open(f)).get('title','')) for f in sorted(glob.glob('<project-root>/<project>/.ai/tasks/*.json'))]"
 ```
 
-Show up to ~10 as buttons (`value: task:<id>`, prefer non-`approved` ones first since those are the actionable ones for Approve/Revise/Reopen/Resume), and mention they can type an id instead. Validate a typed id the same way as project names (must appear in the listing, or `docker exec <container> test -f <project-root>/<project>/.ai/tasks/<timestamp><id>.json`) — if not found, say so and ask again.
+Show up to ~10 as buttons (`value: task:<id>`, prefer non-`approved` ones first since those are the actionable ones for Approve/Revise/Reopen/Resume), and mention they can type an id instead. Validate a typed id the same way as project names (must appear in the listing, or `docker exec <container> test -f <project-root>/<project>/.ai/tasks/<id>.json`) — if not found, say so and ask again.
 
 - `cmd:approve` -> no extra input needed.
 - `cmd:revise` or `cmd:reopen` -> ask for a comment (free text, one message).
@@ -112,7 +112,7 @@ Go to Step 5 with the matching action:
 
 ## Step 5 — Confirm
 
-Send a short plan: container, project, command chosen, and (for new tasks) the requirements as you understood them, or (for existing tasks) the task id/title and action. Then:
+Send a short plan: container, project, command chosen, and (for new tasks) the requirements as you understood them, or (for existing tasks) the task id/title and action. Make it explicit whether this step will just **create** the task file or actually **run** something. Then:
 
 ```json
 {"blocks":[{"type":"buttons","buttons":[{"label":"Confirm","value":"confirm:run"},{"label":"Cancel","value":"confirm:cancel"}]}]}
@@ -120,17 +120,30 @@ Send a short plan: container, project, command chosen, and (for new tasks) the r
 
 Wait for `callback_data: confirm:run` or `callback_data: confirm:cancel`. Never write files or run anything before an explicit `confirm:run`. On cancel, stop and say so.
 
-## Step 6 — Run it
+## Step 6 — Act on it
 
 Only after confirmation:
 
-- **New task**: write the composed JSON to a local file, then `docker cp <local-file> <container>:<project-root>/<project>/.ai/tasks/<id>.json`.
-- **Revise/Reopen**: write the comment text to a local file, then `docker cp <local-file> <container>:<project-root>/<project>/.ai/tasks/<id>.comment.txt` (avoids shell-quoting the comment).
+### New task (`cmd:new`) — write only, never execute
+
+```bash
+docker cp <local-file-with-json> <container>:<project-root>/<project>/.ai/tasks/<id>.json
+```
+
+That's it. Do **not** run `docker exec ... python3 ...` for this path under any circumstances — creating a task must never also launch it. Report the task id and status (`ready-to-develop`), and tell the user to ask for `Resume Task` on that id when they want it to actually run.
+
+### Resume/Approve/Revise/Reopen — these are the only paths that execute anything
+
+For Revise/Reopen, first write the comment to a local file and copy it in (avoids shell-quoting the comment):
+
+```bash
+docker cp <local-file-with-comment> <container>:<project-root>/<project>/.ai/tasks/<id>.comment.txt
+```
 
 Then launch **detached** — these run the Claude Code CLI developer/reviewer loop and can take minutes, so never block waiting on them:
 
 ```bash
-# new / resume
+# resume
 docker exec -d -w <project-root>/<project> <container> sh -c "python3 .ai/task_and_push.py <id> > .ai/tasks/<id>.log 2>&1"
 
 # approve
@@ -155,6 +168,7 @@ Report the JSON `status` field plainly. If it's `human-review`, explain the pipe
 ## Rules
 
 - Never target a container other than `docker-php` or `docker-nodejs`.
+- Never run `docker exec ... python3 ...` (or anything else that executes) as part of `cmd:new` — New Task only ever writes the JSON file via `docker cp`. Execution only ever happens from `cmd:resume`/`cmd:approve`/`cmd:revise`/`cmd:reopen`.
 - Never skip the Step 2 scaffolding check or the Step 5 confirmation.
 - Never offer or run `main.py` or `resolve_task.py` directly.
 - Never treat a `callback_data: ...` message as anything other than the expected step's structured input.
