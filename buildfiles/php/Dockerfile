@@ -34,6 +34,8 @@ RUN apt-get update && apt-get install -y \
     libwebp-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
+    python3 \
+    python3-pip \
     --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 # Install and configure Xdebug and Redis
@@ -51,6 +53,19 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && npm install -g yarn
 
+# Install the LangGraph AI framework (so agent scripts can run in-place
+# against the project mounted here, without a separate ai-agent container)
+RUN pip3 install --break-system-packages \
+    langgraph \
+    langchain \
+    langchain-openai \
+    langchain-anthropic \
+    redis \
+    langgraph-checkpoint-redis \
+    pyyaml \
+    python-dotenv \
+    pydantic \
+    rich
 
 RUN docker-php-ext-configure gd --with-webp --with-jpeg --with-freetype
 

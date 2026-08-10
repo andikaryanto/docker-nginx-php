@@ -16,6 +16,22 @@ RUN apt-get update -o Acquire::Check-Valid-Until=false && apt-get install -y php
 # Install Claude Code CLI
 RUN npm install -g @anthropic-ai/claude-code
 
+# Install Python and the LangGraph AI framework (so agent scripts can run
+# in-place against the project mounted here, without a separate ai-agent container)
+RUN apt-get update -o Acquire::Check-Valid-Until=false && apt-get install -y python3 python3-pip && apt-get clean
+
+RUN pip3 install --break-system-packages \
+    langgraph \
+    langchain \
+    langchain-openai \
+    langchain-anthropic \
+    redis \
+    langgraph-checkpoint-redis \
+    pyyaml \
+    python-dotenv \
+    pydantic \
+    rich
+
 # Install Yarn globally
 # RUN npm install -g yarn
 
