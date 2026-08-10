@@ -332,6 +332,28 @@ services:
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.19
+    openclaw:
+        image: ghcr.io/openclaw/openclaw:latest
+        container_name: openclaw
+        restart: always
+        user: root
+        environment:
+            - GEMINI_API_KEY=${GEMINI_API_KEY}
+            - OPENCLAW_SANDBOX=1
+            - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
+            - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+            - OPENCLAW_STATE_DIR=/home/node/.openclaw
+            - OPENCLAW_CONFIG_PATH=/home/node/.openclaw/openclaw.json
+            - OPENCLAW_WORKSPACE_DIR=/home/node/.openclaw/workspace
+        volumes:
+            - ${OPENCLAW_CONFIG_ROOT}:/home/node/.openclaw
+            - /var/run/docker.sock:/var/run/docker.sock
+        ports:
+            - "18789:18789" # Gateway / dashboard / API
+            - "18790:18790" # Bridge
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.21
     minio-init:
         image: quay.io/minio/mc:latest
         container_name: docker-minio-init

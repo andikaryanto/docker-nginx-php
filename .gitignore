@@ -3,3 +3,5 @@ docker-compose.yml
 litespeed_data
 litespeed_logs
 config/codex*/*
+config/openclaw/*
+!config/openclaw/openclaw.json

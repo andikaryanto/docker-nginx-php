@@ -1,0 +1,28 @@
+{
+  "gateway": {
+    "mode": "local",
+    "bind": "lan",
+    "auth": {
+      "mode": "token"
+    }
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.7.1",
+    "lastTouchedAt": "2026-08-10T08:56:46.134Z"
+  },
+  "agents": {
+    "defaults": {
+      "model": "google/gemini-3.1-flash-lite"
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true
+    }
+  },
+  "commands": {
+    "ownerAllowFrom": [
+      "telegram:5020896869"
+    ]
+  }
+}
