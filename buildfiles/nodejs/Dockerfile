@@ -25,6 +25,7 @@ RUN pip3 install --break-system-packages \
     langchain \
     langchain-openai \
     langchain-anthropic \
+    langgraph-cli[inmem] \
     redis \
     langgraph-checkpoint-redis \
     pyyaml \
