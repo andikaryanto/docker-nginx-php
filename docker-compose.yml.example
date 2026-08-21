@@ -35,8 +35,8 @@ services:
         ports:
             - "8080:8080"
         command: >
-            sh -c "git config --global user.name \"$$GH_USERNAME\" &&
-                    git config --global user.email \"$$GH_EMAIL\" &&
+            sh -c "git config --global user.name \"$GH_USERNAME\" &&
+                    git config --global user.email \"$GH_EMAIL\" &&
                     php-fpm -D &&
                     tail -f /dev/null"
         networks:
@@ -110,14 +110,16 @@ services:
             - ${CODEX_CONFIG_ROOT}:/root/.codex
             - ${CLAUDE_CODE_CONFIG_ROOT}:/root/.claude
         ports:
-            - "3000-3010:3000-3010" # Optional, expose ports for projects
+            - "3000-3010:3000-3010"
+            - "8081-8082:8081-8082" # Optional, expose ports for projects
+            - "5173:5173"
         extra_hosts:
             - "landlord.laravelsimklinik.id:172.16.0.2"
         stdin_open: true
         tty: true
         command: >
-            sh -c "git config --global user.name \"$$GH_USERNAME\" &&
-                    git config --global user.email \"$$GH_EMAIL\" &&
+            sh -c "git config --global user.name \"$GH_USERNAME\" &&
+                    git config --global user.email \"$GH_EMAIL\" &&
                     tail -f /dev/null"
         networks:
             nginx_mysql_php_network:
@@ -325,37 +327,13 @@ services:
             - GH_EMAIL=${GH_EMAIL}
             - GH_USERNAME=${GH_USERNAME}
         command: >
-            sh -c "git config --global user.name \"$$GH_USERNAME\" &&
-                    git config --global user.email \"$$GH_EMAIL\" &&
+            sh -c "git config --global user.name \"$GH_USERNAME\" &&
+                    git config --global user.email \"$GH_EMAIL\" &&
                     tail -f /dev/null"
         tty: true        
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.19
-    openclaw:
-        build:
-            context: .
-            dockerfile: buildfiles/openclaw/Dockerfile
-        container_name: openclaw
-        restart: always
-        user: root
-        environment:
-            - GEMINI_API_KEY=${GEMINI_API_KEY}
-            - OPENCLAW_SANDBOX=1
-            - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
-            - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-            - OPENCLAW_STATE_DIR=/home/node/.openclaw
-            - OPENCLAW_CONFIG_PATH=/home/node/.openclaw/openclaw.json
-            - OPENCLAW_WORKSPACE_DIR=/home/node/.openclaw/workspace
-        volumes:
-            - ${OPENCLAW_CONFIG_ROOT}:/home/node/.openclaw
-            - /var/run/docker.sock:/var/run/docker.sock
-        ports:
-            - "18789:18789" # Gateway / dashboard / API
-            - "18790:18790" # Bridge
-        networks:
-            nginx_mysql_php_network:
-                ipv4_address: 172.16.0.21
     minio-init:
         image: quay.io/minio/mc:latest
         container_name: docker-minio-init
@@ -364,7 +342,7 @@ services:
         restart: "no"
         entrypoint: >
             sh -c "
-            until mc alias set myminio http://minio:9000 admin password123; do sleep 1; done;
+            until mc alias set myminio http://docker-minio:9000 admin password123; do sleep 1; done;
             mc mb --ignore-existing myminio/simklinik;
             mc anonymous set download myminio/simklinik;
             "
