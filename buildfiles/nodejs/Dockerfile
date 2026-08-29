@@ -6,6 +6,7 @@ FROM node:20
 RUN apt-get update -o Acquire::Check-Valid-Until=false && apt-get install -y git curl && apt-get clean
 
 #copy idrsa
+COPY config/sshkey/config /root/.ssh/config
 COPY config/sshkey/id_rsa /root/.ssh/id_rsa
 RUN chmod 600 /root/.ssh/id_rsa
 
