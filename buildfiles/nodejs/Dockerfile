@@ -1,41 +1,11 @@
 # Use the official Node.js image
 # FROM node:18.20
-FROM node:20
-
-# Install Git
-RUN apt-get update -o Acquire::Check-Valid-Until=false && apt-get install -y git curl && apt-get clean
+FROM andiaryanto11/andik-node:20
 
 #copy idrsa
 COPY config/sshkey/config /root/.ssh/config
 COPY config/sshkey/id_rsa /root/.ssh/id_rsa
 RUN chmod 600 /root/.ssh/id_rsa
-
-# Install Composer (needs PHP CLI)
-RUN apt-get update -o Acquire::Check-Valid-Until=false && apt-get install -y php-cli && apt-get clean \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# Install Claude Code CLI
-RUN npm install -g @anthropic-ai/claude-code
-
-# Install Python and the LangGraph AI framework (so agent scripts can run
-# in-place against the project mounted here, without a separate ai-agent container)
-RUN apt-get update -o Acquire::Check-Valid-Until=false && apt-get install -y python3 python3-pip && apt-get clean
-
-RUN pip3 install --break-system-packages \
-    langgraph \
-    langchain \
-    langchain-openai \
-    langchain-anthropic \
-    langgraph-cli[inmem] \
-    redis \
-    langgraph-checkpoint-redis \
-    pyyaml \
-    python-dotenv \
-    pydantic \
-    rich
-
-# Install Yarn globally
-# RUN npm install -g yarn
 
 # Set the working directory (optional)
 WORKDIR /projects
