@@ -29,5 +29,13 @@ RUN pip3 install --break-system-packages \
     pydantic \
     rich
 
+# install cloudflared (dev only)
+ARG TARGETARCH
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates \
+    && curl -fsSL -o /usr/local/bin/cloudflared \
+       "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-${TARGETARCH}" \
+    && chmod +x /usr/local/bin/cloudflared \
+    && rm -rf /var/lib/apt/lists/*
+
 # Default command (keep the container running)
 CMD ["tail", "-f", "/dev/null"]
