@@ -234,7 +234,7 @@ services:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.15
     minio:
-        image: quay.io/minio/minio:latest
+        image: bitnamilegacy/minio:latest
         container_name: docker-minio
         restart: always
         ports:
@@ -244,8 +244,14 @@ services:
             MINIO_ROOT_USER: admin
             MINIO_ROOT_PASSWORD: password123
         volumes:
-            - minio:/data
-        command: server /data --console-address ":9001"
+            - minio:/bitnami/minio/data
+        command: server /bitnami/minio/data --console-address ":9001"
+        healthcheck:
+            test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:9000/minio/health/live >/dev/null || exit 1"]
+            interval: 10s
+            timeout: 5s
+            retries: 12
+            start_period: 15s
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.16
@@ -358,16 +364,19 @@ services:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.21
     minio-init:
-        image: quay.io/minio/mc:latest
+        image: bitnamilegacy/minio-client:latest
         container_name: docker-minio-init
         depends_on:
-            - minio
+            minio:
+                condition: service_healthy
         restart: "no"
         entrypoint: >
             sh -c "
             until mc alias set myminio http://minio:9000 admin password123; do sleep 1; done;
             mc mb --ignore-existing myminio/simklinik;
             mc anonymous set download myminio/simklinik;
+            mc mb --ignore-existing myminio/dramavision;
+            mc anonymous set download myminio/dramavision;
             "
         networks:
             nginx_mysql_php_network:
