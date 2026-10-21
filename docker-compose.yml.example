@@ -102,6 +102,9 @@ services:
         build: 
             context: .
             dockerfile: ${NODEJS_BUILD}/Dockerfile 
+        user: root
+        environment:
+            CODEX_HOME: /root/.codex
         restart: always
         security_opt:
             - seccomp=unconfined
