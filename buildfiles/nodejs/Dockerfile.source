@@ -12,6 +12,9 @@ RUN apt-get update -o Acquire::Check-Valid-Until=false && apt-get install -y php
 # Install Claude Code CLI
 RUN npm install -g @anthropic-ai/claude-code
 
+# Install OpenAI Codex CLI
+RUN npm install -g @openai/codex
+
 # Install Python and the LangGraph AI framework (so agent scripts can run
 # in-place against the project mounted here, without a separate ai-agent container)
 RUN apt-get update -o Acquire::Check-Valid-Until=false && apt-get install -y python3 python3-pip && apt-get clean
