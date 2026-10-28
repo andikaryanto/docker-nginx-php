@@ -10,10 +10,12 @@ Trigger phrases: "do task", "create task", "new task", "run task", or anything a
 
 ## Containers
 
-| Container | Project root |
-| --- | --- |
-| `docker-php` | `/var/www/` |
-| `docker-nodejs` | `/projects/` |
+| Container | Project root | User |
+| --- | --- | --- |
+| `docker-php` | `/var/www/` | `www-data` |
+| `docker-nodejs` | `/projects/` | `node` |
+
+Always run `docker exec` as that container's user (`docker exec -u <user> ...`), never as root — the `docker exec <container>` commands below are shorthand for `docker exec -u <user> <container>`. Always copy files in with `docker cp -a` so they keep this gateway's uid (1000, same as both users) instead of becoming root-owned.
 
 Only ever target these two containers by name. Never touch anything outside the chosen project's own directory inside the chosen container.
 
@@ -127,7 +129,7 @@ Only after confirmation:
 ### New task (`cmd:new`) — write only, never execute
 
 ```bash
-docker cp <local-file-with-json> <container>:<project-root>/<project>/.ai/tasks/<id>.json
+docker cp -a <local-file-with-json> <container>:<project-root>/<project>/.ai/tasks/<id>.json
 ```
 
 That's it. Do **not** run `docker exec ... python3 ...` for this path under any circumstances — creating a task must never also launch it. Report the task id and status (`ready-to-develop`), and tell the user to ask for `Resume Task` on that id when they want it to actually run.
@@ -137,7 +139,7 @@ That's it. Do **not** run `docker exec ... python3 ...` for this path under any 
 For Revise/Reopen, first write the comment to a local file and copy it in (avoids shell-quoting the comment):
 
 ```bash
-docker cp <local-file-with-comment> <container>:<project-root>/<project>/.ai/tasks/<id>.comment.txt
+docker cp -a <local-file-with-comment> <container>:<project-root>/<project>/.ai/tasks/<id>.comment.txt
 ```
 
 Then launch **detached** — these run the Claude Code CLI developer/reviewer loop and can take minutes, so never block waiting on them:

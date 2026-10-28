@@ -14,3 +14,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get update \
     && apt-get install -y --no-install-recommends docker-ce-cli \
     && rm -rf /var/lib/apt/lists/*
+
+# Back to the image's non-root "node" user for runtime.
+USER node

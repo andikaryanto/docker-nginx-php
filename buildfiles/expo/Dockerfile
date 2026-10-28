@@ -22,8 +22,8 @@ RUN id node
 # Optional but useful for cleaner shell history / color output
 # SSH key lives under the non-root "node" user's home (matching the
 # host-mounted .codex volume), not root's
-RUN mkdir -p /home/node/.ssh /home/node/.codex \
-    && chown node:node /home/node/.ssh /home/node/.codex \
+RUN mkdir -p /home/node/.ssh /home/node/.codex /home/node/.npm /app/node_modules \
+    && chown node:node /home/node/.ssh /home/node/.codex /home/node/.npm /app /app/node_modules \
     && chmod 700 /home/node/.ssh
 COPY --chown=node:node config/sshkey/id_rsa /home/node/.ssh/id_rsa
 RUN chmod 600 /home/node/.ssh/id_rsa

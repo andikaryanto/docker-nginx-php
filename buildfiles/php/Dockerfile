@@ -25,7 +25,6 @@ RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     make \
-    cron \
     nano \
     dos2unix \
     libpq-dev \
@@ -83,24 +82,24 @@ RUN docker-php-source extract \
     && docker-php-ext-enable redis
 
 COPY buildfiles/php/entrypoint.sh /usr/local/bin/
-COPY buildfiles/php/laravel-crontab /etc/cron.d/
 
-#copy idrsa into www-data's home (HOME above), so SSH/Codex/Claude keep
-#www-data ownership instead of root's when run via `docker exec -u www-data`
-RUN mkdir -p /var/www/.ssh /var/www/.codex /var/www/.claude \
-    && chown www-data:www-data /var/www/.ssh /var/www/.codex /var/www/.claude \
-    && chmod 700 /var/www/.ssh
-COPY --chown=www-data:www-data config/sshkey/id_rsa /var/www/.ssh/id_rsa
-COPY --chown=www-data:www-data config/sshkey/id_rsa /var/www/.ssh/id_rsa.pub
-COPY --chown=www-data:www-data config/sshkey/id_rsa /var/www/.ssh/id_ed25519
-COPY --chown=www-data:www-data config/sshkey/id_rsa /var/www/.ssh/id_ed25519.pub
-RUN chmod 600 /var/www/.ssh/id_rsa
-RUN chmod 600 /var/www/.ssh/id_ed25519
+# Run the container as www-data, remapped to uid/gid 1000 (the host user) so
+# Codex/Claude can use the host-shared ~/.codex and ~/.claude and files they
+# write keep the host user's ownership. Its home moves out of /var/www, which
+# the "php" volume hides.
+RUN groupmod -o -g 1000 www-data \
+    && usermod -o -u 1000 -g 1000 -d /home/www-data www-data \
+    && mkdir -p /home/www-data/.ssh /home/www-data/.codex /home/www-data/.claude \
+    && chown -R www-data:www-data /home/www-data \
+    && chmod 700 /home/www-data/.ssh
+COPY --chown=www-data:www-data config/sshkey/id_rsa /home/www-data/.ssh/id_rsa
+COPY --chown=www-data:www-data config/sshkey/id_rsa /home/www-data/.ssh/id_rsa.pub
+COPY --chown=www-data:www-data config/sshkey/id_rsa /home/www-data/.ssh/id_ed25519
+COPY --chown=www-data:www-data config/sshkey/id_rsa /home/www-data/.ssh/id_ed25519.pub
+RUN chmod 600 /home/www-data/.ssh/id_rsa
+RUN chmod 600 /home/www-data/.ssh/id_ed25519
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# convert line endings
-RUN dos2unix /etc/cron.d/laravel-crontab
 
 # Set working directory
 WORKDIR /var/www
@@ -108,6 +107,9 @@ WORKDIR /var/www
 # Expose PHP-FPM port
 EXPOSE 9000
 
-# Define the entrypoint to start PHP-FPM and cron
+# Define the entrypoint to start PHP-FPM; the Laravel scheduler runs in its
+# own container (php-scheduler in docker-compose)
+USER www-data
+
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["php-fpm"]
