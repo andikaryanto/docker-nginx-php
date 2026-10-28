@@ -1,6 +1,6 @@
 # Use the official Node.js image
 # FROM node:18.20
-FROM andiaryanto11/andik-node:20
+FROM andiaryanto11/node:24.22.1
 
 # Install OpenAI Codex CLI so the mounted /root/.codex session is usable.
 RUN npm install -g @openai/codex

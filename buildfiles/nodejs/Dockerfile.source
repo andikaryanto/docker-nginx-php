@@ -1,6 +1,6 @@
 # Use the official Node.js image
 # FROM node:18.20
-FROM node:20
+FROM node:24.22.1
 
 # Install Git
 RUN apt-get update -o Acquire::Check-Valid-Until=false && apt-get install -y git curl && apt-get clean
@@ -19,7 +19,7 @@ RUN npm install -g @openai/codex
 # in-place against the project mounted here, without a separate ai-agent container)
 RUN apt-get update -o Acquire::Check-Valid-Until=false && apt-get install -y python3 python3-pip && apt-get clean
 
-RUN pip3 install --break-system-packages \
+RUN pip3 install --break-system-packages --no-cache-dir --retries 10 --timeout 120 \
     langgraph \
     langchain \
     langchain-openai \
@@ -35,7 +35,7 @@ RUN pip3 install --break-system-packages \
 # install cloudflared (dev only)
 ARG TARGETARCH
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates ffmpeg \
-    && curl -fsSL -o /usr/local/bin/cloudflared \
+    && curl -fsSL --retry 10 --retry-all-errors --retry-delay 3 -o /usr/local/bin/cloudflared \
        "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-${TARGETARCH}" \
     && chmod +x /usr/local/bin/cloudflared \
     && rm -rf /var/lib/apt/lists/*
