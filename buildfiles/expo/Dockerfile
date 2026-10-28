@@ -15,9 +15,18 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# This image must ship the "node" user baked into the official node:* base
+# image (uid/gid 1000); fail the build loudly if a custom base ever drops it.
+RUN id node
+
 # Optional but useful for cleaner shell history / color output
-COPY config/sshkey/id_rsa /root/.ssh/id_rsa
-RUN chmod 600 /root/.ssh/id_rsa
+# SSH key lives under the non-root "node" user's home (matching the
+# host-mounted .codex volume), not root's
+RUN mkdir -p /home/node/.ssh /home/node/.codex \
+    && chown node:node /home/node/.ssh /home/node/.codex \
+    && chmod 700 /home/node/.ssh
+COPY --chown=node:node config/sshkey/id_rsa /home/node/.ssh/id_rsa
+RUN chmod 600 /home/node/.ssh/id_rsa
 ENV TERM=xterm-256color
 
 # Expo / Metro friendly defaults

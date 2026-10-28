@@ -85,13 +85,17 @@ RUN docker-php-source extract \
 COPY buildfiles/php/entrypoint.sh /usr/local/bin/
 COPY buildfiles/php/laravel-crontab /etc/cron.d/
 
-#copy idrsa
-COPY config/sshkey/id_rsa /root/.ssh/id_rsa
-COPY config/sshkey/id_rsa /root/.ssh/id_rsa.pub
-COPY config/sshkey/id_rsa /root/.ssh/id_ed25519
-COPY config/sshkey/id_rsa /root/.ssh/id_ed25519.pub
-RUN chmod 600 /root/.ssh/id_rsa
-RUN chmod 600 /root/.ssh/id_ed25519
+#copy idrsa into www-data's home (HOME above), so SSH/Codex/Claude keep
+#www-data ownership instead of root's when run via `docker exec -u www-data`
+RUN mkdir -p /var/www/.ssh /var/www/.codex /var/www/.claude \
+    && chown www-data:www-data /var/www/.ssh /var/www/.codex /var/www/.claude \
+    && chmod 700 /var/www/.ssh
+COPY --chown=www-data:www-data config/sshkey/id_rsa /var/www/.ssh/id_rsa
+COPY --chown=www-data:www-data config/sshkey/id_rsa /var/www/.ssh/id_rsa.pub
+COPY --chown=www-data:www-data config/sshkey/id_rsa /var/www/.ssh/id_ed25519
+COPY --chown=www-data:www-data config/sshkey/id_rsa /var/www/.ssh/id_ed25519.pub
+RUN chmod 600 /var/www/.ssh/id_rsa
+RUN chmod 600 /var/www/.ssh/id_ed25519
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
