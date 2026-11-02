@@ -53,6 +53,8 @@ services:
         # Laravel scheduler (replaces cron), as www-data like the php container
         working_dir: /var/www/laravelsimklinik
         command: php artisan schedule:work
+        environment:
+            XDEBUG_MODE: "off"
         volumes:
             - php:/var/www/
         depends_on:
@@ -410,10 +412,27 @@ services:
             mc anonymous set download myminio/simklinik;
             mc mb --ignore-existing myminio/dramavision;
             mc anonymous set download myminio/dramavision;
+            mc mb --ignore-existing myminio/salam;
+            mc anonymous set download myminio/salam;
             "
         networks:
             nginx_mysql_php_network:
                 ipv4_address: 172.16.0.20
+    nginx-node:
+        container_name: docker-nginx-node
+        build: ${NGINX_BUILD}
+        volumes:
+            - ${NGINX_NODE_CONFIG_ROOT}/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+            - ${NGINX_NODE_CONFIG_ROOT}/etc/nginx/sites-available:/etc/nginx/sites-enabled
+            - node:/projects
+        ports:
+            - "9091:80"
+        restart: always
+        depends_on:
+            - nodejs 
+        networks:
+            nginx_mysql_php_network:
+                ipv4_address: 172.16.0.21
 volumes:
     expo:
     expo_node_modules:
